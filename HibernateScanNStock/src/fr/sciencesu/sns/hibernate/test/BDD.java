@@ -8,11 +8,13 @@ import fr.sciencesu.sns.hibernate.builder.EntityBuilder;
 import fr.sciencesu.sns.hibernate.jpa.Produit;
 import fr.sciencesu.sns.hibernate.jpa.ProduitImpl;
 import fr.sciencesu.sns.hibernate.jpa.SiteGeographique;
+import fr.sciencesu.sns.hibernate.jpa.SiteGeographiqueImpl;
 import fr.sciencesu.sns.hibernate.utils.HibernateUtil;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -55,6 +57,20 @@ public class BDD {
     {
         return new ProduitImpl();//initEntity(table, params);
     }
+    
+    public static boolean Create(String nom,String pays,String region,String departement) 
+    {
+        SiteGeographique e;
+        
+        e = new SiteGeographique(nom, pays, region, departement);
+        Transaction tx = session.beginTransaction();
+
+        session.save(e);
+        //s.save(a);
+        tx.commit();
+        
+        return false;
+    }
 
     public static boolean Create(String table, Produit e) {
 
@@ -92,8 +108,13 @@ public class BDD {
 
     public static String ReadSites(String table) {
         // Récupération de l'Event d'après son titre
-        Query q = session.createQuery("select name_site from " + table);
-        return q.uniqueResult().toString();
+        Query q = session.createQuery("select nom from " + table);
+        List<String> obj = (List<String>) q.list();
+        String str = "";
+        for (String s : obj) {
+            str += s+"\n";
+        }
+        return str;
     }
 
     public static void UpdateSite(String table, String field, String value) {
