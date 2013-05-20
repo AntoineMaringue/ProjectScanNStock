@@ -26,17 +26,10 @@ public class Main
     
     public static void main(String[] args)
     {
-        BDD.connection();
-        
-        BDD.Create("name1", "pays1", "region1", "dep1");
-        BDD.Create("name2", "pays1", "region1", "dep1");
-        BDD.Create("name3", "pays1", "region1", "dep1");
-        BDD.Create("name4", "pays1", "region1", "dep1");
-        
-        System.out.println(BDD.ReadSites("SiteGeographique"));
-        //testCreateAssociation();
-        //testReadAssociation("1");
-        BDD.deconnection();
+        connection();
+        testCreateAssociation();
+        testReadAssociation("1");
+        deconnection();
     }
     
     /**
