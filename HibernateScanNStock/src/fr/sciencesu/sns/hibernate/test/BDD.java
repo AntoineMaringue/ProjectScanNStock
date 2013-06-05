@@ -4,7 +4,9 @@
  */
 package fr.sciencesu.sns.hibernate.test;
 
-import fr.sciencesu.sns.hibernate.builder.EntityBuilder;
+import fr.sciencesu.sns.hibernate.builder.IAssociation;
+import fr.sciencesu.sns.hibernate.builder.IProduit;
+import fr.sciencesu.sns.hibernate.jpa.Association;
 import fr.sciencesu.sns.hibernate.jpa.Produit;
 import fr.sciencesu.sns.hibernate.utils.HibernateUtil;
 import java.text.ParseException;
@@ -21,7 +23,7 @@ import org.hibernate.Transaction;
  *
  * @author antoi_000
  */
-public class BDD {
+public class BDD implements IAssociation, IProduit {
     //Déclaration d'une session hibernate
 
     private static Session session = null;
@@ -49,16 +51,15 @@ public class BDD {
             System.out.println(object.toString());
         }
     }
-    
-    public static Produit Create(String table, String... params) 
-    {
+
+    public Produit Create(String table, String... params) {
         return new Produit();//initEntity(table, params);
     }
-    
-     public static void CreateProduit(String nom,Double prix,Calendar date) 
-    {
+
+    @Override
+    public void CreateProduit(String nom, Double prix, Calendar date) {
         Produit e = new Produit(nom, prix, date);
-        
+
         // Enregistrements
         Transaction tx = session.beginTransaction();
 
@@ -72,7 +73,7 @@ public class BDD {
 
         //Création des objets à rendre persistants
         //e = initEntity(table);
-        
+
         //Event e = new Event("Titre de l'évènement", "description", true);
         //Address a = new Address("Nom de l'adresse", "24 rue des cerisiers", "75001", "Paris");
 
@@ -92,7 +93,8 @@ public class BDD {
 
     }
 
-    public static void ReadProduit(String table, String field, String value) {
+    @Override
+    public void ReadProduit(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
@@ -102,18 +104,20 @@ public class BDD {
         System.out.println(e.toString());
     }
 
-    public static String ReadProduit(String table) {
+    @Override
+    public String ReadProduit(String table) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("select nom from " + table);
         String s = "";
         for (Iterator it = q.list().iterator(); it.hasNext();) {
-            s += (String) it.next()+"\n";
-            
+            s += (String) it.next() + "\n";
+
         }
         return s;
     }
 
-    public static void UpdateProduit(String table, String field, String value) {
+    @Override
+    public void UpdateProduit(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
@@ -130,9 +134,9 @@ public class BDD {
 
         print(table);
     }
-   
 
-    public static void DeleteProduit(String table, String field, String value) {
+    @Override
+    public void DeleteProduit(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
@@ -156,5 +160,74 @@ public class BDD {
         } catch (ParseException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    @Override
+    public void CreateAssociation(String raisonSociale, String adresse, String codePostal, String ville, String telephone, String email) {
+        Association e = new Association(raisonSociale, adresse, codePostal, ville, telephone, email);
+
+        // Enregistrements
+        Transaction tx = session.beginTransaction();
+
+        session.save(e);
+        //s.save(a);
+        tx.commit();
+    }
+
+    @Override
+    public void ReadAssociation(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Association e = (Association) q.uniqueResult();
+
+        // Affichage de l'objet récupéré
+        System.out.println(e.toString());
+    }
+
+    @Override
+    public String ReadAssociation(String table) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("select raisonSociale from " + table);
+        String s = "";
+        for (Iterator it = q.list().iterator(); it.hasNext();) {
+            s += (String) it.next() + "\n";
+
+        }
+        return s;
+    }
+
+    @Override
+    public void UpdateAssociation(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Association e = (Association) q.uniqueResult();
+
+        // Modifications des attributs de l'objet
+        // e.setDescription("Description modifiée");
+        //e.setAllDay(false);
+
+        // Prise en compte de la modification
+        Transaction tx = session.beginTransaction();
+        session.update(e);
+        tx.commit();
+
+        print(table);
+    }
+
+    @Override
+    public void DeleteAssociation(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Association e = (Association) q.uniqueResult();
+
+        // supression object
+        Transaction tx = session.beginTransaction();
+        session.delete(e);
+        tx.commit();
+
+        print(table);
     }
 }
