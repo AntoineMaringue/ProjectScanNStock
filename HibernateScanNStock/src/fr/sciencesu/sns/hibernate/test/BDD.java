@@ -6,13 +6,12 @@ package fr.sciencesu.sns.hibernate.test;
 
 import fr.sciencesu.sns.hibernate.builder.EntityBuilder;
 import fr.sciencesu.sns.hibernate.jpa.Produit;
-import fr.sciencesu.sns.hibernate.jpa.ProduitImpl;
-import fr.sciencesu.sns.hibernate.jpa.SiteGeographique;
 import fr.sciencesu.sns.hibernate.utils.HibernateUtil;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Set;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -53,7 +52,20 @@ public class BDD {
     
     public static Produit Create(String table, String... params) 
     {
-        return new ProduitImpl();//initEntity(table, params);
+        return new Produit();//initEntity(table, params);
+    }
+    
+     public static void CreateProduit(String nom,Double prix,Calendar date) 
+    {
+        Produit e = new Produit(nom, prix, date);
+        
+        // Enregistrements
+        Transaction tx = session.beginTransaction();
+
+        session.save(e);
+        //s.save(a);
+        tx.commit();
+
     }
 
     public static boolean Create(String table, Produit e) {
@@ -80,27 +92,32 @@ public class BDD {
 
     }
 
-    public static void ReadSite(String table, String field, String value) {
+    public static void ReadProduit(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
-        SiteGeographique e = (SiteGeographique) q.uniqueResult();
+        Produit e = (Produit) q.uniqueResult();
 
         // Affichage de l'objet récupéré
         System.out.println(e.toString());
     }
 
-    public static String ReadSites(String table) {
+    public static String ReadProduit(String table) {
         // Récupération de l'Event d'après son titre
-        Query q = session.createQuery("select name_site from " + table);
-        return q.uniqueResult().toString();
+        Query q = session.createQuery("select nom from " + table);
+        String s = "";
+        for (Iterator it = q.list().iterator(); it.hasNext();) {
+            s += (String) it.next()+"\n";
+            
+        }
+        return s;
     }
 
-    public static void UpdateSite(String table, String field, String value) {
+    public static void UpdateProduit(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
-        SiteGeographique e = (SiteGeographique) q.uniqueResult();
+        Produit e = (Produit) q.uniqueResult();
 
         // Modifications des attributs de l'objet
         // e.setDescription("Description modifiée");
@@ -113,12 +130,13 @@ public class BDD {
 
         print(table);
     }
+   
 
-    public static void DeleteSite(String table, String field, String value) {
+    public static void DeleteProduit(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
-        SiteGeographique e = (SiteGeographique) q.uniqueResult();
+        Produit e = (Produit) q.uniqueResult();
 
         // supression object
         Transaction tx = session.beginTransaction();
@@ -126,60 +144,6 @@ public class BDD {
         tx.commit();
 
         print(table);
-    }
-
-    private static SiteGeographique initEntity(String table,String... params) 
-    {
-        //L'entité retournée
-        SiteGeographique init = null;
-        //Le constructeur d'entités
-        EntityBuilder eb = null;
-        
-        //On regarde l'entitée désirée
-        /*switch(table)
-        {
-            case "Produit":
-            {
-                if(params.length < 1)
-                    init = eb.CreateProduit();
-                else if(params.length == 3)
-                    init = eb.CreateProduit(params[0], Double.parseDouble(params[1]), toCalendar(params[2]));
-                else if (params.length == 5)
-                    init = eb.CreateProduit(params[0], Double.parseDouble(params[1]), params[2], Double.parseDouble(params[3]), params[4]);
-                break;
-            }
-            case "Domaine":
-            {
-                init = eb.CreateDomaine();
-                break;
-            }
-            case "Association":
-            {
-                init = eb.CreateAssociation();
-                break;
-            }
-            case "Stock":
-            {
-                init = eb.CreateStock();
-                break;
-            }
-            case "TypeProduit":
-            {
-                init = eb.CreateTypeProduit();
-                break;
-            }
-            case "TypeAssociation":
-            {
-                init = eb.CreateTypeAssociation();
-                break;
-            }
-            case "SiteGeographique":
-            {
-                init = eb.CreateSiteGeo();
-                break;
-            }
-        }*/
-        return init;
     }
 
     private static Calendar toCalendar(String dateString) {

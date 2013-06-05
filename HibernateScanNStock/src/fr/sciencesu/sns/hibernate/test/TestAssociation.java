@@ -5,7 +5,6 @@
 package fr.sciencesu.sns.hibernate.test;
 
 import fr.sciencesu.sns.hibernate.jpa.Association;
-import fr.sciencesu.sns.hibernate.jpa.Domaine;
 import fr.sciencesu.sns.hibernate.jpa.TypeAssociation;
 import static fr.sciencesu.sns.hibernate.test.Main.connection;
 import static fr.sciencesu.sns.hibernate.test.Main.deconnection;
@@ -46,7 +45,6 @@ public class TestAssociation
          //Création des objets à rendre persistants
       Association a = new Association("Raison sociale", "adresse", "71160", "Digoin", "00 00 00 00 00", "");
       TypeAssociation ta = new TypeAssociation("Type association");
-      Domaine d = new Domaine("domaine name");
       
       
       Set<TypeAssociation> sta = new HashSet<>();
@@ -55,13 +53,11 @@ public class TestAssociation
       
         // Association entre Event et Address
       a.setTypes(sta);
-      a.setDomaineId(d);
  
       // Enregistrements
       Transaction tx = session.beginTransaction();
       
       session.save(ta);
-      session.save(d);
       session.save(a);
       
       session.flush();

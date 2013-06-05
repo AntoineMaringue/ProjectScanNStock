@@ -38,9 +38,6 @@ public class Stock implements Serializable
     @OneToMany(mappedBy="produits_stock")
     Set<Produit> produits;
     
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "stocks_sites_geo",referencedColumnName = "sites_geo_id")        
-    private SiteGeographique site;
 
     public Stock() {
     }
@@ -52,7 +49,7 @@ public class Stock implements Serializable
 
     @Override
     public String toString() {
-        return "Stock{" + "id=" + id + ", nom=" + nom + ", superficie=" + superficie + ", produits=" + produits + ", site=" + site + '}';
+        return "Stock{" + "id=" + id + ", nom=" + nom + ", superficie=" + superficie + ", produits=" + produits  + '}';
     }
 
     public String getNom() {
@@ -77,16 +74,7 @@ public class Stock implements Serializable
 
     public void setProduits(Set<Produit> produits) {
         this.produits = produits;
-    }
-
-    public SiteGeographique getSite() {
-        return site;
-    }
-
-    public void setSite(SiteGeographique site) {
-        this.site = site;
-    }
-   
+    }   
 
     public Integer getId() {
         return id;

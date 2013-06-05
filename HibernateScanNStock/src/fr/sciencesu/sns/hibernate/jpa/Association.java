@@ -59,12 +59,6 @@ public class Association implements Serializable
        inverseJoinColumns=@JoinColumn(name="types_association_id")
    )
     private Set<TypeAssociation> types;
-
-    @ManyToOne(
-        cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH }
-    )
-    @JoinColumn(name="associations_domaines_id")
-    private Domaine domaineId;
     
     public Association() {
         types = new HashSet<>();
@@ -143,14 +137,6 @@ public class Association implements Serializable
 
     public void setTypes(Set<TypeAssociation> types) {
         this.types = types;
-    }
-
-    public Domaine getDomaineId() {
-        return domaineId;
-    }
-
-    public void setDomaineId(Domaine domaineId) {
-        this.domaineId = domaineId;
     }
     
     
