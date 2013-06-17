@@ -6,12 +6,10 @@ package fr.sciencesu.sns.hibernate.jpa;
 
 import java.io.Serializable;
 import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -38,7 +36,9 @@ public class Stock implements Serializable
     @OneToMany(mappedBy="produits_stock")
     Set<Produit> produits;
     
-
+    @OneToOne(mappedBy = "stock")
+    Association association;
+    
     public Stock() {
     }
 
@@ -83,5 +83,15 @@ public class Stock implements Serializable
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public Association getAssociation() {
+        return association;
+    }
+
+    public void setAssociation(Association association) {
+        this.association = association;
+    }
+    
+    
     
 }

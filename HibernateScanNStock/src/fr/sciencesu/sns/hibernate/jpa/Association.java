@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -48,6 +49,9 @@ public class Association implements Serializable
     
     @Column(name = "associations_mail")
     private String email;
+    
+    @OneToOne
+    private Stock stock;
     
     
     @ManyToMany(
@@ -137,6 +141,14 @@ public class Association implements Serializable
 
     public void setTypes(Set<TypeAssociation> types) {
         this.types = types;
+    }
+
+    public Stock getStock() {
+        return stock;
+    }
+
+    public void setStock(Stock stock) {
+        this.stock = stock;
     }
     
     

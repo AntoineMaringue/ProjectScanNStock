@@ -8,17 +8,18 @@
     <property name="hibernate.connection.username">root</property>
     <property name="hibernate.show_sql">true</property>
     <!-- Comportement pour la conservation des tables -->
-    <property name="hbm2ddl.auto">create</property>
+    <property name="hbm2ddl.auto">update</property>
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.use_sql_comments">true</property>
     <property name="hibernate.format_sql">true</property>
-    <mapping class="fr.sciencesu.sns.hibernate.jpa.Beneficiare" file="" jar="" package="" resource=""/>
+    
+    <mapping class="fr.sciencesu.sns.hibernate.jpa.Beneficiare"/>
     <mapping class="fr.sciencesu.sns.hibernate.jpa.TypeAssociation"/>
     <mapping class="fr.sciencesu.sns.hibernate.jpa.Association"/>
     <mapping class="fr.sciencesu.sns.hibernate.jpa.TypeProduit"/>
     <mapping class="fr.sciencesu.sns.hibernate.jpa.Produit"/>
     <mapping class="fr.sciencesu.sns.hibernate.jpa.Stock"/>
-    <mapping class="fr.sciencesu.sns.hibernate.jpa.Fournisseur" file="" jar="" package="" resource=""/>
+    <mapping class="fr.sciencesu.sns.hibernate.jpa.Fournisseur"/>
     <mapping class="fr.sciencesu.sns.hibernate.jpa.Membre"/>
   </session-factory>
 </hibernate-configuration>

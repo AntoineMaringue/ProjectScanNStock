@@ -43,7 +43,16 @@ public class Membre implements Serializable {
        inverseJoinColumns=@JoinColumn(name="associations_id")
    )    
      private Set<Association> associations;
+
+    public Membre() {
+    }
+
+    public Membre(String nom, String prenom) {
+        this.nom = nom;
+        this.prenom = prenom;
+    }
       
+    
 
     public Integer getId() {
         return id;

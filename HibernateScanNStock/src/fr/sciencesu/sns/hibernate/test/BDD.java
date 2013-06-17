@@ -4,10 +4,11 @@
  */
 package fr.sciencesu.sns.hibernate.test;
 
-import fr.sciencesu.sns.hibernate.builder.IAssociation;
-import fr.sciencesu.sns.hibernate.builder.IProduit;
 import fr.sciencesu.sns.hibernate.jpa.Association;
+import fr.sciencesu.sns.hibernate.jpa.Membre;
 import fr.sciencesu.sns.hibernate.jpa.Produit;
+import fr.sciencesu.sns.hibernate.jpa.Stock;
+import static fr.sciencesu.sns.hibernate.test.Main.getStock;
 import fr.sciencesu.sns.hibernate.utils.HibernateUtil;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,7 +24,7 @@ import org.hibernate.Transaction;
  *
  * @author antoi_000
  */
-public class BDD implements IAssociation, IProduit {
+public class BDD {
     //Déclaration d'une session hibernate
 
     private static Session session = null;
@@ -56,8 +57,8 @@ public class BDD implements IAssociation, IProduit {
         return new Produit();//initEntity(table, params);
     }
 
-    @Override
-    public void CreateProduit(String nom, Double prix, Calendar date) {
+
+    public static void CreateProduit(String nom, Double prix, Calendar date) {
         Produit e = new Produit(nom, prix, date);
 
         // Enregistrements
@@ -93,8 +94,8 @@ public class BDD implements IAssociation, IProduit {
 
     }
 
-    @Override
-    public void ReadProduit(String table, String field, String value) {
+   
+    public static void ReadProduit(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
@@ -104,8 +105,8 @@ public class BDD implements IAssociation, IProduit {
         System.out.println(e.toString());
     }
 
-    @Override
-    public String ReadProduit(String table) {
+    
+    public static String ReadProduit(String table) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("select nom from " + table);
         String s = "";
@@ -116,8 +117,8 @@ public class BDD implements IAssociation, IProduit {
         return s;
     }
 
-    @Override
-    public void UpdateProduit(String table, String field, String value) {
+    
+    /*public static void UpdateProduit(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
@@ -133,10 +134,26 @@ public class BDD implements IAssociation, IProduit {
         tx.commit();
 
         print(table);
+    }*/
+    public static void UpdateProduit(String table, String nameProduct , String field, String value) {
+        // Récupération de l'Event d'après son titre
+       
+       String query = "FROM Produit WHERE nom = '" + nameProduct +"'" ;
+        Query q = session.createQuery(query);//"FROM " + table + " WHERE " + field + " = " + value + " AND " + "produits_nom = "+"'"+nameProduct+"'"
+        Produit e = (Produit) q.uniqueResult();
+        Stock s = getStock("nom",value);
+        e.setProduits_stock(s);
+        
+        Transaction tx = session.beginTransaction();
+
+        session.saveOrUpdate(s);
+        session.saveOrUpdate(e);
+        //s.save(a);
+        tx.commit();
     }
 
-    @Override
-    public void DeleteProduit(String table, String field, String value) {
+   
+    public static void DeleteProduit(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
@@ -162,8 +179,8 @@ public class BDD implements IAssociation, IProduit {
         }
     }
 
-    @Override
-    public void CreateAssociation(String raisonSociale, String adresse, String codePostal, String ville, String telephone, String email) {
+    
+    public static void CreateAssociation(String raisonSociale, String adresse, String codePostal, String ville, String telephone, String email) {
         Association e = new Association(raisonSociale, adresse, codePostal, ville, telephone, email);
 
         // Enregistrements
@@ -174,8 +191,8 @@ public class BDD implements IAssociation, IProduit {
         tx.commit();
     }
 
-    @Override
-    public void ReadAssociation(String table, String field, String value) {
+    
+    public static void ReadAssociation(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
@@ -184,9 +201,17 @@ public class BDD implements IAssociation, IProduit {
         // Affichage de l'objet récupéré
         System.out.println(e.toString());
     }
+    
+    public static Association getAssociation(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Association e = (Association) q.uniqueResult();
+        return e;
+    }
 
-    @Override
-    public String ReadAssociation(String table) {
+    
+    public static String ReadAssociation(String table) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("select raisonSociale from " + table);
         String s = "";
@@ -196,9 +221,20 @@ public class BDD implements IAssociation, IProduit {
         }
         return s;
     }
+    
+    public static String ReadAssociationWithStock(String table, String nameAssociation) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createSQLQuery("SELECT stock_stocks_id FROM " + table + " WHERE associations_rs = '"+nameAssociation +"'" );
+        String s = "";
+        for (Iterator it = q.list().iterator(); it.hasNext();) {
+            s += it.next() + "\n";
 
-    @Override
-    public void UpdateAssociation(String table, String field, String value) {
+        }
+        return s;
+    }   
+
+    
+    public static void UpdateAssociation(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
@@ -216,12 +252,166 @@ public class BDD implements IAssociation, IProduit {
         print(table);
     }
 
-    @Override
-    public void DeleteAssociation(String table, String field, String value) {
+    
+    public static void DeleteAssociation(String table, String field, String value) {
         // Récupération de l'Event d'après son titre
         Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
         q.setString("myTitle", value);
         Association e = (Association) q.uniqueResult();
+
+        // supression object
+        Transaction tx = session.beginTransaction();
+        session.delete(e);
+        tx.commit();
+
+        print(table);
+    }
+
+     
+    public static void CreateMembre(String nom,String prenom) {
+        Membre e = new Membre(nom,prenom);
+
+        // Enregistrements
+        Transaction tx = session.beginTransaction();
+
+        session.save(e);
+        //s.save(a);
+        tx.commit();
+    }
+
+    
+    public static void ReadMembre(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Membre e = (Membre) q.uniqueResult();
+
+        // Affichage de l'objet récupéré
+        System.out.println(e.toString());
+    }
+    
+    public static Membre getMembre(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Membre e = (Membre) q.uniqueResult();
+        return e;
+    }
+
+    
+    public static String ReadMembre(String table) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("select nom from " + table);
+        String s = "";
+        for (Iterator it = q.list().iterator(); it.hasNext();) {
+            s += (String) it.next() + "\n";
+
+        }
+        return s;
+    }
+
+    
+    public static void UpdateMembre(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Membre e = (Membre) q.uniqueResult();
+
+        // Modifications des attributs de l'objet
+        // e.setDescription("Description modifiée");
+        //e.setAllDay(false);
+
+        // Prise en compte de la modification
+        Transaction tx = session.beginTransaction();
+        session.update(e);
+        tx.commit();
+
+        print(table);
+    }
+
+    
+    public static void DeleteMembre(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Membre e = (Membre) q.uniqueResult();
+
+        // supression object
+        Transaction tx = session.beginTransaction();
+        session.delete(e);
+        tx.commit();
+
+        print(table);
+    }
+    
+    public static void CreateStock(String nom,Long superficie) {
+        Stock e = new Stock(nom,superficie);
+
+        // Enregistrements
+        Transaction tx = session.beginTransaction();
+
+        session.save(e);
+        //s.save(a);
+        tx.commit();
+    }
+
+    
+    public static void ReadStock(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Stock e = (Stock) q.uniqueResult();
+
+        // Affichage de l'objet récupéré
+        System.out.println(e.toString());
+    }
+    
+     public static Stock getStock(String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("FROM Stock WHERE id = '"+value+"'");
+        Stock e = (Stock) q.uniqueResult();
+        return e;
+    }
+
+    
+    public static String ReadStock(String table) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("select nom from " + table);
+        String s = "";
+        for (Iterator it = q.list().iterator(); it.hasNext();) {
+            s += (String) it.next() + "\n";
+
+        }
+        return s;
+    }
+    
+    
+
+    
+    public static void UpdateStock(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Stock e = (Stock) q.uniqueResult();
+
+        // Modifications des attributs de l'objet
+        // e.setDescription("Description modifiée");
+        //e.setAllDay(false);
+
+        // Prise en compte de la modification
+        Transaction tx = session.beginTransaction();
+        session.update(e);
+        tx.commit();
+
+        print(table);
+    }
+
+    
+    public static void DeleteStock(String table, String field, String value) {
+        // Récupération de l'Event d'après son titre
+        Query q = session.createQuery("from " + table + " where " + field + "= :myTitle");
+        q.setString("myTitle", value);
+        Stock e = (Stock) q.uniqueResult();
 
         // supression object
         Transaction tx = session.beginTransaction();
